@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+id            String  @id @default(cuid())
+email        String  @unique
+passwordHash  String  
+xp            Int      @default(2)
+streak        Int      @default(2)
+lastStudyDate DateTime?
+decks         Deck[]
+createdAt     DateTime  @default(now())
+
+}
+
+model Deck{
+
+  id      String  @id @default(cuid())
+  name    String
+  UserId  String
+  user User @relation(fields: [UserId], references: [id])
+  Cards   Card[]
+  createdAt     DateTime  @default(now())
+}
+
+model Card {
+  id            String  @id @default(cuid())
+  front         String
+  back          String
+  corretCount   Int     @default(0)
+  nextReviewAt  DateTime  @default(now())
+  deckId        String
+  deck Deck @relation(fields: [deckId], references: [id])
+  createdAt     DateTime  @default(now())
+}
